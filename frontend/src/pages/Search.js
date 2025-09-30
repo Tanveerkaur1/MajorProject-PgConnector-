@@ -2,45 +2,100 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Search(){
-const [city, setCity] = useState('');
-const [minRent, setMinRent] = useState('');
-const [maxRent, setMaxRent] = useState('');
-const [gender, setGender] = useState('any');
-const [onlyAvailable, setOnlyAvailable] = useState(true);
+const [searchQuery, setSearchQuery] = useState('');
 const navigate = useNavigate();
 
-const onSubmit = (e)=>{
-e.preventDefault();
-const params = new URLSearchParams();
-if (city) params.set('city', city);
-if (minRent) params.set('min', String(minRent));
-if (maxRent) params.set('max', String(maxRent));
-if (gender && gender !== 'any') params.set('gender', gender);
-if (onlyAvailable) params.set('available', '1');
-navigate(`/results?${params.toString()}`);
+const featuredCities = [
+  "Bengaluru", "Bhubaneswar", "Chennai", "Coimbatore", 
+  "Gurgaon", "Hyderabad", "Indore", "Jaipur", 
+  "Kolkata", "Mumbai", "New Delhi", "Noida"
+];
+
+const handleSearch = (e) => {
+  e.preventDefault();
+  const params = new URLSearchParams();
+  if (searchQuery) params.set('city', searchQuery);
+  navigate(`/results?${params.toString()}`);
+}
+
+const handleCityClick = (city) => {
+  const params = new URLSearchParams();
+  params.set('city', city);
+  navigate(`/results?${params.toString()}`);
 }
 
 return (
-<main className="container" style={{ padding: '32px 0' }}>
-<h2 style={{ margin: '0 0 16px' }}>Search PGs</h2>
-<form className="search-form" onSubmit={onSubmit} style={{ flexDirection:'column', alignItems:'stretch', maxWidth: 720 }}>
-<input placeholder="City" value={city} onChange={e=>setCity(e.target.value)} required />
-<div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-<input type="number" placeholder="Min Rent (₹)" value={minRent} onChange={e=>setMinRent(e.target.value)} />
-<input type="number" placeholder="Max Rent (₹)" value={maxRent} onChange={e=>setMaxRent(e.target.value)} />
-</div>
-<div style={{ display:'flex', gap:16, alignItems:'center' }}>
-<label style={{ color:'#cbd5e1' }}>Gender preference:</label>
-<label style={{ display:'flex', gap:6, alignItems:'center' }}><input type="radio" name="gender-pref" value="any" checked={gender==='any'} onChange={()=>setGender('any')} /> Any</label>
-<label style={{ display:'flex', gap:6, alignItems:'center' }}><input type="radio" name="gender-pref" value="male" checked={gender==='male'} onChange={()=>setGender('male')} /> Male</label>
-<label style={{ display:'flex', gap:6, alignItems:'center' }}><input type="radio" name="gender-pref" value="female" checked={gender==='female'} onChange={()=>setGender('female')} /> Female</label>
-</div>
-<label style={{ display:'flex', gap:8, alignItems:'center', color:'#cbd5e1' }}><input type="checkbox" checked={onlyAvailable} onChange={e=>setOnlyAvailable(e.target.checked)} /> Only show available</label>
-<div style={{ display:'flex', justifyContent:'flex-end' }}>
-<button type="submit">Search</button>
-</div>
-</form>
-</main>
+  <>
+    <main className="container">
+      {/* Hero Section with Logo and Tagline */}
+      <div className="search-hero">
+        <div className="brand-container">
+          <h1 className="brand-logo">Book My PG</h1>
+          <p className="brand-tagline">India's Largest PG Network to Book your PG Online</p>
+        </div>
+        
+        {/* Main Search Section */}
+        <div className="search-container">
+          <form onSubmit={handleSearch} className="search-form-main">
+            <input 
+              type="text" 
+              className="search-input" 
+              placeholder="Enter city name, area etc..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" className="search-button">Search</button>
+          </form>
+        </div>
+        
+        {/* Featured Cities Grid */}
+        <div className="featured-cities-section">
+          <h2 className="section-title">Popular Cities</h2>
+          <div className="cities-grid">
+            {featuredCities.map((city, index) => (
+              <div 
+                key={index} 
+                className="city-card" 
+                onClick={() => handleCityClick(city)}
+              >
+                {city}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    {/* Footer */}
+    <footer className="footer">
+      <div className="container">
+        <div className="footer-content">
+          <div className="footer-section">
+            <h3>Book My PG</h3>
+            <p>India's Largest PG Network</p>
+          </div>
+          <div className="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About Us</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </div>
+          <div className="footer-section">
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="/terms">Terms of Service</a></li>
+              <li><a href="/privacy">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>&copy; {new Date().getFullYear()} Book My PG. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </>
 );
 }
 
